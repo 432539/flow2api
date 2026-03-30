@@ -816,6 +816,7 @@ class BrowserCaptchaService:
                     debug_logger.log_info(f"[BrowserCaptcha] Personal 浏览器代理: {self._proxy_url}")
 
                 browser_args = [
+                    '--no-sandbox',
                     '--disable-dev-shm-usage',
                     '--disable-setuid-sandbox',
                     '--disable-gpu',
