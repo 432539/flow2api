@@ -1328,10 +1328,12 @@ class Database:
     # Request log operations
     async def add_request_log(self, log: RequestLog) -> int:
         """Add request log and return log id"""
+        from datetime import datetime
+        now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         async with self._connect(write=True) as db:
             cursor = await db.execute("""
-                INSERT INTO request_logs (token_id, operation, request_body, response_body, status_code, duration, status_text, progress)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                INSERT INTO request_logs (token_id, operation, request_body, response_body, status_code, duration, status_text, progress, created_at, updated_at)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """, (
                 log.token_id,
                 log.operation,
@@ -1341,6 +1343,8 @@ class Database:
                 log.duration,
                 log.status_text or "",
                 log.progress,
+                now,
+                now,
             ))
             await db.commit()
             return cursor.lastrowid
@@ -1369,7 +1373,9 @@ class Database:
         for key, value in update_fields.items():
             clauses.append(f"{key} = ?")
             values.append(value)
-        clauses.append("updated_at = CURRENT_TIMESTAMP")
+        from datetime import datetime
+        clauses.append("updated_at = ?")
+        values.append(datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
         values.append(log_id)
 
         async with self._connect(write=True) as db:

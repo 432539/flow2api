@@ -8,7 +8,7 @@ services:
     image: flow2api:headed
     container_name: flow2api-headed
     ports:
-      - "8000:8000"
+      - "8088:8088"
     volumes:
       - ./data:/app/data
       - ./tmp:/app/tmp
@@ -18,5 +18,6 @@ services:
       - ALLOW_DOCKER_HEADED_CAPTCHA=true
       - DISPLAY=:99
       - XVFB_WHD=1920x1080x24
+      - TZ=Asia/Shanghai
     shm_size: "2gb"
     restart: unless-stopped
